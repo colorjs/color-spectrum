@@ -61,7 +61,7 @@ let [r, g, b] = xyz.rgb(x, y, z);
 > [Rendering of Spectra](https://www.fourmilab.ch/documents/specrend/)<br/>
 > [Wavelength to color](https://academo.org/demos/wavelength-to-colour-relationship/)<br/>
 > [Color science](http://www.midnightkite.com/color.html)<br/>
-> [Analytical Approcimation of Color Matching Functions](http://jcgt.org/published/0002/02/01/paper.pdf)
+> [Analytical Approximation of Color Matching Functions](http://jcgt.org/published/0002/02/01/paper.pdf)
 
 ## Credits
 
