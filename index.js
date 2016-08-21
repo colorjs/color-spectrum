@@ -11,10 +11,13 @@ module.exports = spectrumToColor;
 //convert spectrum to color
 function spectrumToColor (intensities) {
 	let values = spectrumToXyz(intensities);
-	let rgb = xyz.rgb(values).map(Math.floor);
+	// let rgb = xyz.rgb(values).map(v => Math.floor(v * 20));
 
-	// let rgb = xyzToRgb(values);
-	rgb = rgb.map(v => Math.floor(v));
+	let rgb = xyzToRgb(values);
+	rgb = constrainRgb(rgb);
+	rgb = normRgb(rgb);
+	rgb = gamma(rgb, 3);
+	rgb = rgb.map(v => Math.floor(v * 255));
 
 	return `rgb(${rgb})`;
 };
@@ -22,45 +25,117 @@ function spectrumToColor (intensities) {
 /* A colour system is defined by the CIE x and y coordinates of
    its three primary illuminants and the x and y coordinates of
    the white point. */
-const Rec709system = { name: "CIE REC 709", xRed: 0.64,   yRed:0.33,   xGreen: 0.30,   yGreen: 0.60,   xBlue: 0.15,   yBlue: 0.06,   xWhite: 0.3127, yWhite: 0.3291,  gamma: 0 };
+const CieSystem = {
+	xRed: 0.7355, yRed: 0.2645,
+	xGreen: 0.2658, yGreen: 0.7243,
+	xBlue: 0.1669, yBlue: 0.0085,
+	xWhite: .3333, yWhite: .3333,
+	gamma: 0
+};
+const Rec709system = {
+	xRed: 0.64, yRed:0.33,
+	xGreen: 0.30, yGreen: 0.60,
+	xBlue: 0.15, yBlue: 0.06,
+	xWhite: 0.3127, yWhite: 0.3291,
+gamma: 0 };
+
+
+function gammaCorrect(channel, g) {
+	cs = Rec709system;
+
+    let gamma = g || cs.gamma;
+
+    if (gamma == 0) {
+		/* Rec. 709 gamma correction. */
+		let cc = 0.018;
+
+		if (channel < cc) {
+		    channel *= ((1.099 * Math.pow(cc, 0.45)) - 0.099) / cc;
+		} else {
+		    channel = (1.099 * Math.pow(channel, 0.45)) - 0.099;
+		}
+    } else {
+		/* Nonlinear colour = (Linear colour)^(1/gamma) */
+		channel = Math.pow(channel, 1.0 / gamma);
+    }
+
+    return channel
+}
+function gamma ([r, g, b], v) {
+	return [
+		gammaCorrect(r, v),
+		gammaCorrect(g, v),
+		gammaCorrect(b, v)
+	];
+}
 
 function xyzToRgb ([xc, yc, zc]) {
 	let cs = Rec709system;
-    let xr, yr, zr, xg, yg, zg, xb, yb, zb;
-    let xw, yw, zw;
-    let rx, ry, rz, gx, gy, gz, bx, by, bz;
-    let rw, gw, bw;
+	let xr, yr, zr, xg, yg, zg, xb, yb, zb;
+	let xw, yw, zw;
+	let rx, ry, rz, gx, gy, gz, bx, by, bz;
+	let rw, gw, bw;
 
-    xr = cs.xRed;    yr = cs.yRed;    zr = 1 - (xr + yr);
-    xg = cs.xGreen;  yg = cs.yGreen;  zg = 1 - (xg + yg);
-    xb = cs.xBlue;   yb = cs.yBlue;   zb = 1 - (xb + yb);
+	xr = cs.xRed;    yr = cs.yRed;    zr = 1 - (xr + yr);
+	xg = cs.xGreen;  yg = cs.yGreen;  zg = 1 - (xg + yg);
+	xb = cs.xBlue;   yb = cs.yBlue;   zb = 1 - (xb + yb);
 
-    xw = cs.xWhite;  yw = cs.yWhite;  zw = 1 - (xw + yw);
+	xw = cs.xWhite;  yw = cs.yWhite;  zw = 1 - (xw + yw);
 
-    /* xyz -> rgb matrix, before scaling to white. */
+	/* xyz -> rgb matrix, before scaling to white. */
 
-    rx = (yg * zb) - (yb * zg);  ry = (xb * zg) - (xg * zb);  rz = (xg * yb) - (xb * yg);
-    gx = (yb * zr) - (yr * zb);  gy = (xr * zb) - (xb * zr);  gz = (xb * yr) - (xr * yb);
-    bx = (yr * zg) - (yg * zr);  by = (xg * zr) - (xr * zg);  bz = (xr * yg) - (xg * yr);
+	rx = (yg * zb) - (yb * zg);  ry = (xb * zg) - (xg * zb);  rz = (xg * yb) - (xb * yg);
+	gx = (yb * zr) - (yr * zb);  gy = (xr * zb) - (xb * zr);  gz = (xb * yr) - (xr * yb);
+	bx = (yr * zg) - (yg * zr);  by = (xg * zr) - (xr * zg);  bz = (xr * yg) - (xg * yr);
 
-    /* White scaling factors.
-       Dividing by yw scales the white luminance to unity, as conventional. */
+	/* White scaling factors.
+	   Dividing by yw scales the white luminance to unity, as conventional. */
 
-    rw = ((rx * xw) + (ry * yw) + (rz * zw)) / yw;
-    gw = ((gx * xw) + (gy * yw) + (gz * zw)) / yw;
-    bw = ((bx * xw) + (by * yw) + (bz * zw)) / yw;
+	rw = ((rx * xw) + (ry * yw) + (rz * zw)) / yw;
+	gw = ((gx * xw) + (gy * yw) + (gz * zw)) / yw;
+	bw = ((bx * xw) + (by * yw) + (bz * zw)) / yw;
 
-    /* xyz -> rgb matrix, correctly scaled to white. */
+	/* xyz -> rgb matrix, correctly scaled to white. */
 
-    rx = rx / rw;  ry = ry / rw;  rz = rz / rw;
-    gx = gx / gw;  gy = gy / gw;  gz = gz / gw;
-    bx = bx / bw;  by = by / bw;  bz = bz / bw;
+	rx = rx / rw;  ry = ry / rw;  rz = rz / rw;
+	gx = gx / gw;  gy = gy / gw;  gz = gz / gw;
+	bx = bx / bw;  by = by / bw;  bz = bz / bw;
 
-    /* rgb of the desired point */
+	/* rgb of the desired point */
 
-    let r = (rx * xc) + (ry * yc) + (rz * zc);
-    let g = (gx * xc) + (gy * yc) + (gz * zc);
-    let b = (bx * xc) + (by * yc) + (bz * zc);
+	let r = (rx * xc) + (ry * yc) + (rz * zc);
+	let g = (gx * xc) + (gy * yc) + (gz * zc);
+	let b = (bx * xc) + (by * yc) + (bz * zc);
+
+	return [r, g, b];
+}
+
+function constrainRgb([r, g, b]) {
+	let w;
+
+	/* Amount of white needed is w = - min(0, *r, *g, *b) */
+
+	w = (0 < r) ? 0 : r;
+	w = (w < g) ? w : g;
+	w = (w < b) ? w : b;
+	w = -w;
+
+	/* Add just enough white to make r, g, b all positive. */
+
+	if (w > 0) {
+	    r += w;  g += w; b += w;
+	}
+
+	return [r, g, b];
+}
+function normRgb([r, g, b]) {
+    let greatest = Math.max(r, Math.max(g, b));
+
+    if (greatest > 0) {
+		r /= greatest;
+		g /= greatest;
+		b /= greatest;
+    }
 
     return [r, g, b];
 }
