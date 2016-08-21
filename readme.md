@@ -8,8 +8,8 @@ Convert spectrum or wavelength to color.
 const toColor = require('color-spectrum');
 const fft = require('fourier-transform');
 
-let magnitudes = fft(myTimeData);
-document.body.background = toColor(magnitudes);
+let magnitudes = fft(myData);
+document.body.style.background = toColor(magnitudes);
 ```
 
 ## API
