@@ -1,6 +1,6 @@
 const toColor = require('./');
 const assert = require('assert');
-const Panel = require('../settings-panel');
+const Panel = require('settings-panel');
 const isBrowser = require('is-browser');
 require('enable-mobile');
 

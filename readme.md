@@ -19,14 +19,15 @@ document.body.background = toColor(magnitudes);
 Get spectrum to color converter.
 
 `require('color-spectrum/table')` to get a table of wavelength to XYZ values.
+
 `require('color-spectrum/approx')` to get approximator of wavelength to XYZ values.
 
 </details>
 <details><summary>**`let color = spectrumColor(list|number, options?);`**</summary>
 
-Calculate color based off spectrum or a single wavelength value. Spectrum is a list of float values corresponding to frequencies, like magnitudes or intensities, for example, a direct output from [fourier-transform](https://github.com/scijs/fourier-transform) with real numbers can be used. The visible range `380..780nm` will be stretched to cover the passed number of intensities.
+Calculate color based off spectrum or a single wavelength value. Spectrum is a list of float values, like magnitudes or intensities, for example, a direct output from [fourier-transform](https://github.com/scijs/fourier-transform) with real numbers. The visible range `380..780nm` will be stretched to cover the passed list of intensities.
 
-Possible options include:
+Possible options:
 
 ```js
 // Use approximation formulas or matching table interpolation
@@ -47,6 +48,10 @@ You can also use technical methods:
 
 //get xyz values for a list of magnitudes
 [x, y, z] = spectrumColor.spectrum(list, opts);
+
+//you would like to transform to rgb
+let xyz = require('color-space/xyz');
+let [r, g, b] = xyz.rgb(x, y, z);
 ```
 
 </details>

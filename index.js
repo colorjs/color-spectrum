@@ -3,7 +3,7 @@
  */
 
 const interpolate = require('interpolate-arrays');
-const xyz = require('../color-space/xyz');
+const xyz = require('color-space/xyz');
 const table = require('./table');
 const approx = require('./approx');
 
