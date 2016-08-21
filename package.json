@@ -17,7 +17,10 @@
     "color-space",
     "intensities",
     "fourier",
-    "scijs"
+    "scijs",
+    "rgb",
+    "wavelength",
+    "lambda"
   ],
   "author": "ΔY <dfcreative@gmail.com>",
   "license": "MIT",
