@@ -1,0 +1,38 @@
+{
+  "name": "color-spectrum",
+  "version": "1.0.0",
+  "description": "Convert spectrum, like FFT result, to a color",
+  "main": "index.js",
+  "scripts": {
+    "test": "budo test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dfcreative/color-spectrum.git"
+  },
+  "keywords": [
+    "fft",
+    "spectrum",
+    "color",
+    "color-space",
+    "intensities",
+    "fourier",
+    "scijs"
+  ],
+  "author": "ΔY <dfcreative@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dfcreative/color-spectrum/issues"
+  },
+  "homepage": "https://github.com/dfcreative/color-spectrum#readme",
+  "dependencies": {
+    "color-space": "^1.14.5",
+    "interpolate-arrays": "^1.0.2"
+  },
+  "devDependencies": {
+    "enable-mobile": "^1.0.2",
+    "fourier-transform": "^1.0.2",
+    "is-browser": "^2.0.1",
+    "settings-panel": "^1.8.14"
+  }
+}
