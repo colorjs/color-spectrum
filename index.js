@@ -8,147 +8,36 @@ const table = require('./table');
 
 module.exports = spectrumToColor;
 
+
 //convert spectrum to color
 function spectrumToColor (intensities) {
 	let values = spectrumToXyz(intensities);
-	// let rgb = xyz.rgb(values).map(v => Math.floor(v * 20));
 
-	let rgb = xyzToRgb(values);
-	rgb = constrainRgb(rgb);
-	rgb = normRgb(rgb);
-	rgb = gamma(rgb, 3);
-	rgb = rgb.map(v => Math.floor(v * 255));
+	values = values.map((v, i) => v * xyz.max[i]);
+
+	let rgb = xyz.rgb(values).map(v => Math.floor(v));
+
+	// let rgb = xyzToRgb(values);
+	// rgb = constrainRgb(rgb);
+	// rgb = normRgb(rgb);
+	// rgb = gamma(rgb, 3);
+	// rgb = rgb.map(v => Math.floor(v * 255));
 
 	return `rgb(${rgb})`;
 };
 
-/* A colour system is defined by the CIE x and y coordinates of
-   its three primary illuminants and the x and y coordinates of
-   the white point. */
-const CieSystem = {
-	xRed: 0.7355, yRed: 0.2645,
-	xGreen: 0.2658, yGreen: 0.7243,
-	xBlue: 0.1669, yBlue: 0.0085,
-	xWhite: .3333, yWhite: .3333,
-	gamma: 0
-};
-const Rec709system = {
-	xRed: 0.64, yRed:0.33,
-	xGreen: 0.30, yGreen: 0.60,
-	xBlue: 0.15, yBlue: 0.06,
-	xWhite: 0.3127, yWhite: 0.3291,
-gamma: 0 };
-
-
-function gammaCorrect(channel, g) {
-	cs = Rec709system;
-
-    let gamma = g || cs.gamma;
-
-    if (gamma == 0) {
-		/* Rec. 709 gamma correction. */
-		let cc = 0.018;
-
-		if (channel < cc) {
-		    channel *= ((1.099 * Math.pow(cc, 0.45)) - 0.099) / cc;
-		} else {
-		    channel = (1.099 * Math.pow(channel, 0.45)) - 0.099;
-		}
-    } else {
-		/* Nonlinear colour = (Linear colour)^(1/gamma) */
-		channel = Math.pow(channel, 1.0 / gamma);
-    }
-
-    return channel
-}
-function gamma ([r, g, b], v) {
-	return [
-		gammaCorrect(r, v),
-		gammaCorrect(g, v),
-		gammaCorrect(b, v)
-	];
-}
-
-function xyzToRgb ([xc, yc, zc]) {
-	let cs = Rec709system;
-	let xr, yr, zr, xg, yg, zg, xb, yb, zb;
-	let xw, yw, zw;
-	let rx, ry, rz, gx, gy, gz, bx, by, bz;
-	let rw, gw, bw;
-
-	xr = cs.xRed;    yr = cs.yRed;    zr = 1 - (xr + yr);
-	xg = cs.xGreen;  yg = cs.yGreen;  zg = 1 - (xg + yg);
-	xb = cs.xBlue;   yb = cs.yBlue;   zb = 1 - (xb + yb);
-
-	xw = cs.xWhite;  yw = cs.yWhite;  zw = 1 - (xw + yw);
-
-	/* xyz -> rgb matrix, before scaling to white. */
-
-	rx = (yg * zb) - (yb * zg);  ry = (xb * zg) - (xg * zb);  rz = (xg * yb) - (xb * yg);
-	gx = (yb * zr) - (yr * zb);  gy = (xr * zb) - (xb * zr);  gz = (xb * yr) - (xr * yb);
-	bx = (yr * zg) - (yg * zr);  by = (xg * zr) - (xr * zg);  bz = (xr * yg) - (xg * yr);
-
-	/* White scaling factors.
-	   Dividing by yw scales the white luminance to unity, as conventional. */
-
-	rw = ((rx * xw) + (ry * yw) + (rz * zw)) / yw;
-	gw = ((gx * xw) + (gy * yw) + (gz * zw)) / yw;
-	bw = ((bx * xw) + (by * yw) + (bz * zw)) / yw;
-
-	/* xyz -> rgb matrix, correctly scaled to white. */
-
-	rx = rx / rw;  ry = ry / rw;  rz = rz / rw;
-	gx = gx / gw;  gy = gy / gw;  gz = gz / gw;
-	bx = bx / bw;  by = by / bw;  bz = bz / bw;
-
-	/* rgb of the desired point */
-
-	let r = (rx * xc) + (ry * yc) + (rz * zc);
-	let g = (gx * xc) + (gy * yc) + (gz * zc);
-	let b = (bx * xc) + (by * yc) + (bz * zc);
-
-	return [r, g, b];
-}
-
-function constrainRgb([r, g, b]) {
-	let w;
-
-	/* Amount of white needed is w = - min(0, *r, *g, *b) */
-
-	w = (0 < r) ? 0 : r;
-	w = (w < g) ? w : g;
-	w = (w < b) ? w : b;
-	w = -w;
-
-	/* Add just enough white to make r, g, b all positive. */
-
-	if (w > 0) {
-	    r += w;  g += w; b += w;
-	}
-
-	return [r, g, b];
-}
-function normRgb([r, g, b]) {
-    let greatest = Math.max(r, Math.max(g, b));
-
-    if (greatest > 0) {
-		r /= greatest;
-		g /= greatest;
-		b /= greatest;
-    }
-
-    return [r, g, b];
-}
 
 //diapasone settings
-const lMin = 380;
-const lMax = 780;
+const lMin = 375;
+const lMax = 725;
 const fMin = 1/lMax;
 const fMax = 1/lMin;
 
 //convert any intensities array to rgb color
 function spectrumToXyz (intensities) {
 	let X = 0, Y = 0, Z = 0, XYZ;
+
+	if (!intensities) return [0, 0, 0];
 
 	if (intensities.length === 1) {
 		intensities = intensities.slice();
@@ -159,26 +48,44 @@ function spectrumToXyz (intensities) {
 	//but may loose peaks, therefore interpolate table
 	for (i = .5; i < intensities.length; i++) {
 		let mag = intensities[Math.floor(i)];
+		if (!mag) {
+			continue;
+		}
 
 		let nf = i / intensities.length;
 		let f = nf * (fMax - fMin) + fMin;
 		let l = 1/f;
 		let nl = (l - lMin) / (lMax - lMin);
 
-		let xyz = interpolate(table, nl);
+		//table-based method
+		// let xyz = interpolate(table, nl);
+		// X += mag * xyz[0];
+		// Y += mag * xyz[1];
+		// Z += mag * xyz[2];
 
-		X += mag * xyz[0];
-		Y += mag * xyz[1];
-		Z += mag * xyz[2];
+		X += mag * xFit(l);
+		Y += mag * yFit(l);
+		Z += mag * zFit(l);
 	}
 
-	XYZ = (X + Y + Z);
+	return [X, Y, Z];
+}
 
-	if (!X && !Y && !Z) return [0,0,0];
-
-	let x = X / XYZ;
-	let y = Y / XYZ;
-	let z = Z / XYZ;
-
-	return [x, y, z];
+//table approximators
+function xFit( wave ) {
+	let t1 = (wave-442.0)*((wave<442.0)?0.0624:0.0374);
+	let t2 = (wave-599.8)*((wave<599.8)?0.0264:0.0323);
+	let t3 = (wave-501.1)*((wave<501.1)?0.0490:0.0382);
+	return 0.362*Math.exp(-0.5*t1*t1) + 1.056*Math.exp(-0.5*t2*t2)
+- 0.065*Math.exp(-0.5*t3*t3);
+}
+function yFit( wave ) {
+	let t1 = (wave-568.8)*((wave<568.8)?0.0213:0.0247);
+	let t2 = (wave-530.9)*((wave<530.9)?0.0613:0.0322);
+	return 0.821*Math.exp(-0.5*t1*t1) + 0.286*Math.exp(-0.5*t2*t2);
+}
+function zFit( wave ) {
+	let t1 = (wave-437.0)*((wave<437.0)?0.0845:0.0278);
+	let t2 = (wave-459.0)*((wave<459.0)?0.0385:0.0725);
+	return 1.217*Math.exp(-0.5*t1*t1) + 0.681*Math.exp(-0.5*t2*t2);
 }

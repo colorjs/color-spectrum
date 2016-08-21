@@ -1,4 +1,7 @@
-/* CIE colour matching functions xBar, yBar, and zBar for
+/*
+	@module color-space/table
+
+	CIE colour matching functions xBar, yBar, and zBar for
    wavelengths from 380 through 780 nanometers, every 5
    nanometers.  For a wavelength lambda in this range:
 
