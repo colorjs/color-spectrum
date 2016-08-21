@@ -96,12 +96,12 @@ function wavelengthToXyz (l, opts) {
 	let whitepoint = opts.whitepoint;
 
 	let xyz;
-	if (opts.normalize) {
+	if (opts.approximate) {
 		xyz = approx(l);
 	}
 	else {
 		let r = (l - 380) / 400;
-		xyz = interpolate(table, l);
+		xyz = interpolate(table, r);
 	}
 
 	return xyz.map((v, i) => v * whitepoint[i]);
