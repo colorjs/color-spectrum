@@ -69,7 +69,7 @@ function spectrumToXyz (intensities, opts) {
 	//integrate over magnitudes
 	let X = 0, Y = 0, Z = 0, XYZ;
 
-	for (i = .5; i < intensities.length; i++) {
+	for (let i = .5; i < intensities.length; i++) {
 		let mag = intensities[Math.floor(i)];
 
 		if (normalize) mag = sum === 0 ? mag : mag/sum;
