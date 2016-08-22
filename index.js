@@ -2,6 +2,8 @@
  * @module  color-spectrum
  */
 
+'use strict';
+
 const interpolate = require('interpolate-arrays');
 const xyz = require('color-space/xyz');
 const table = require('./table');

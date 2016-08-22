@@ -77,12 +77,12 @@ if (isBrowser) {
 		palette: ['#111', '#eee'],
 		title: `<a href="https://github.com/dfcreative/color-spectrum">color-spectrum <span style="position: absolute; opacity: .5; margin-left: .25em; margin-top: -.25em; width: .75em; height: .75em;">${ghIcon}</span></a>`,
 		style: `
-			width: 24rem;
+			width: 20rem;
 			position: absolute;
 			left: 50%;
 			top: 50%;
 			margin-top: -6rem;
-			margin-left: -12rem;
+			margin-left: -10rem;
 		`
 	}).on('change', (a, b, c) => {
 		if (a === 'color') return;

@@ -1,8 +1,12 @@
-# color-spectrum
+# color-spectrum [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 Convert spectrum or wavelength to color.
 
 [![color-spectrum](https://raw.githubusercontent.com/dfcreative/color-spectrum/gh-pages/preview.png "color-spectrum")](http://dfcreative.github.io/color-spectrum/)
+
+## Usage
+
+[![npm install color-spectrum](https://nodei.co/npm/color-spectrum.png?mini=true)](https://npmjs.org/package/color-spectrum/)
 
 ```js
 const toColor = require('color-spectrum');
