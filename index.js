@@ -8973,7 +8973,7 @@ if (isBrowser) {
 		theme: require('settings-panel/theme/control'),
 		palette: ['#111', '#eee'],
 		title: ("<a href=\"https://github.com/dfcreative/color-spectrum\">color-spectrum <span style=\"position: absolute; opacity: .5; margin-left: .25em; margin-top: -.25em; width: .75em; height: .75em;\">" + ghIcon + "</span></a>"),
-		style: "\n\t\t\twidth: 24rem;\n\t\t\tposition: absolute;\n\t\t\tleft: 50%;\n\t\t\ttop: 50%;\n\t\t\tmargin-top: -6rem;\n\t\t\tmargin-left: -12rem;\n\t\t"
+		style: "\n\t\t\twidth: 20rem;\n\t\t\tposition: absolute;\n\t\t\tleft: 50%;\n\t\t\ttop: 50%;\n\t\t\tmargin-top: -6rem;\n\t\t\tmargin-left: -10rem;\n\t\t"
 	}).on('change', function (a, b, c) {
 		if (a === 'color') return;
 		update();
