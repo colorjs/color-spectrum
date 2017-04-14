@@ -34,7 +34,7 @@
     "interpolate-arrays": "^1.0.2"
   },
   "devDependencies": {
-    "bubleify": "^0.5.1",
+    "bubleify": "^0.7.0",
     "enable-mobile": "^1.0.2",
     "fourier-transform": "^1.0.2",
     "is-browser": "^2.0.1",
