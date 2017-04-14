@@ -1,5 +1,7 @@
 # color-spectrum [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/colorjs/color-spectrum.svg)](https://greenkeeper.io/)
+
 Convert spectrum or wavelength to color.
 
 [![color-spectrum](https://raw.githubusercontent.com/dfcreative/color-spectrum/gh-pages/preview.png "color-spectrum")](http://dfcreative.github.io/color-spectrum/)
